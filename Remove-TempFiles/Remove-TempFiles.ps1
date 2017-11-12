@@ -38,11 +38,9 @@ Write-Verbose "Removing temo files in C:\Temp"
 			Write-Output "Sorry, your script has failed. Please review the ErrorLog.txt file on your desktop"
 			IF ($LogError) {
 			$Error | Out-File $ErrorLog
-
-					
-				}
-
-			}
+			
+		}
+	}
 }
 	
 Write-Output "Removal of temp files is now complete"
