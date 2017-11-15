@@ -1,0 +1,51 @@
+<#
+.SYNOPSIS
+Get folders/network drives from remote SMB shares.
+.DESCRIPTION
+This is for getting remote SMB shares mapped to your machine, and also local drives.
+.PARAMETER
+The ComputerName parameter is to specify a computer name.
+.EXAMPLE
+'localhost' | Get-RemoteSMBShare
+#>
+
+Function Get-RemoteSMBShare {
+
+    [cmdletbinding()]
+    param (
+
+        [parameter(mandatory=$true,
+                   ValueFromPipeline=$true)]
+        [alias('hostname')]
+        [ValidateCount(1,5)]
+        [string[]]$ComputerName,
+
+        [string]$ErrorLog = 'C:\Retry.txt',
+
+        [switch]$LogErrors
+
+)
+
+BEGIN{}
+
+PROCESS{
+    TRY {
+        $NoErrors = $true
+        Invoke-Command -ScriptBlock {Get-SmbShare} `
+        -ComputerName $ComputerName ` 
+
+} CATCH {
+        $NoErrors = $false
+        Write-Warning "Sorry, but there was an error. Please check in C:\Retry for the error"
+        IF ($LogErrors) {
+
+        $Error | Out-File $ErrorLog -Append }
+        
+
+            }        
+
+        }
+
+END{}
+
+}
