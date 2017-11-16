@@ -21,9 +21,9 @@ PROCESS {
 	TRY {
 			$ScriptWorked = $true
 			FOREACH ($Directory in $VariableTempDirectory) {
-
-				Remove-Item -Path $env:TEMP -ErrorAction SilentlyContinue
-			}
+		
+			Remove-Item -Path $env:TEMP -ErrorAction SilentlyContinue
+		}
 
 Write-Verbose "Removing temo files in C:\Temp"
 
@@ -51,4 +51,4 @@ END{}
 
 }#FunctionClosingBracket
 
-Remove-TempFiles
+
