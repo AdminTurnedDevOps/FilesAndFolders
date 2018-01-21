@@ -3,13 +3,13 @@ Function New-NetShare {
 
         param (
             [ValidateNotNullOrEmpty]
-            [ValidateCount(1)]
-            [parmater(mandatory=$true)]
+            [ValidateCount(1, 1)]
+            [parameter(mandatory=$true)]
             [string]$UNCSHARE,
 
             [ValidateNotNullOrEmpty]
-            [ValidateCount(1)]
-            [parmater(mandatory=$true)]
+            [ValidateCount(1, 1)]
+            [parameter(mandatory=$true)]
             [string]$DriveLetter,
 
             [string]$ErrorLog,
@@ -64,7 +64,7 @@ process {
             $NoErrors = $false
             Write-Warning "Errors Occured. Please check the error log on your desktop"
             IF($LogError) {
-            $Errors | Out-File $ErrorLog
+            $Errors[0] | Out-File $ErrorLog
                           }
 
                 }#CATCH Closing Bracket
