@@ -1,5 +1,5 @@
 ﻿Function Remove-TempFiles {
-
+[cmdletbinding()]
 	param(
 		[string]$Temp = "C:\temp",
 
@@ -25,7 +25,7 @@ PROCESS {
 			Remove-Item -Path $env:TEMP -ErrorAction SilentlyContinue
 		}
 
-Write-Verbose "Removing temo files in C:\Temp"
+Write-Verbose "Removing temp files in C:\Temp"
 
 			$MainDirectory = $Temp
 
