@@ -1,5 +1,3 @@
-
-
 Function Get-NetworkShare {
 
 <#
