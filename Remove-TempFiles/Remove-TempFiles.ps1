@@ -23,7 +23,7 @@ PROCESS {
 			FOREACH ($Directory in $VariableTempDirectory) {
 		
 			Remove-Item -Path $env:TEMP -ErrorAction SilentlyContinue
-		}
+		} #FOREACH
 
 Write-Verbose "Removing temp files in C:\Temp"
 
@@ -32,16 +32,17 @@ Write-Verbose "Removing temp files in C:\Temp"
 			FOREACH ($Directory in $MainDirectory) {
 
 				Get-childitem $Temp | Remove-Item
-			}
-   } CATCH {
+			} FOREACH
+   } #TRY
+   	CATCH {
 			$ScriptWorked = $false
 			Write-Output "Sorry, your script has failed. Please review the ErrorLog.txt file on your desktop"
 			IF ($LogError) {
 			$Error | Out-File $ErrorLog
 			
 		}
-	}
-}
+	} #CATCH
+} #PROCESS
 	
 Write-Output "Removal of temp files is now complete"
 Write-Verbose "Removed files in the TEMP environment variable and under C:\Temp"
