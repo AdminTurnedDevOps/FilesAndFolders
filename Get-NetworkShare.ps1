@@ -18,7 +18,7 @@ The ComputerName parameter is to specify a computer name.
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [alias('hostname')]
-        [ValidateCount(1,5)]
+        [ValidateCount(1, 5)]
         [string[]]$ComputerName,
 
         [string]$ErrorLog = "C:\Users\$env:USERNAME\Desktop\NetShareErrorLog$(Get-date -Format MM.dd.yy).txt"
