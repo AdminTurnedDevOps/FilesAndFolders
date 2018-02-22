@@ -1,5 +1,5 @@
 $ConfirmPreference='Medium'
-Function Push-Script {
+Function Copy-Script {
     [cmdletbinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
     param(
 
@@ -47,5 +47,3 @@ process {
      
 end{ Get-PSSession | Remove-PSSession }         
 } #Function
-
-Push-Script
