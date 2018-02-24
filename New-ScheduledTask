@@ -1,0 +1,58 @@
+$ConfirmPreference='high'
+Function New-TaskSchedule {
+
+    [cmdletbinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
+    Param (
+        [parameter(mandatory=$true)]
+        [string[]]$ComputerName = @(
+                                     'computer 1'
+                                     'computer 2'
+                                     'etc'
+                                    ),
+        
+        [string]$Protocol = 'Wsman',
+
+        [ValidateNotNull()]
+        [ValidateSet('DOMAIN\username')]   
+        [pscredential]$PSCreds
+
+    )
+
+    begin {$CIMSession_Option = New-CimSessionOption -Protocol $Protocol}
+                
+    process {
+            IF ($PSCmdlet.ShouldProcess($ComputerName)) {
+                $CimSessionParams = @{
+                                    'ComputerName'=$ComputerName
+                                    'SessionOption'=$CIMSession_Option
+                                    'Credential'=$PSCreds
+                                    }
+
+                    #Creatong new CIM session to specified machines based on CIM session options and parameters.                 
+                    $CIMSession = New-CimSession @CimSessionParams
+                    
+                    $Schedule_PowerShell_Task = New-ScheduledTaskAction -Execute "PowerShell.exe -File 'C:\YourFolder\YourScript.ps1' "
+                    
+                    $Scheduled_Task_Trigger = New-ScheduledTaskTrigger -Daily -At 7pm -CimSession $CIMSession
+
+                    $Scheduled_Task_Principal = New-ScheduledTaskPrincipal "SYSTEM" -RunLevel Highest
+                    
+                    #Keeping Scheduled Task settings idle
+                    $Scheduled_Task_Settings = New-ScheduledTaskSettingsSet
+
+                $ScheduledTaskParams = @{
+                                        'Action'=$Schedule_PowerShell_Task
+                                        'Principal'=$Scheduled_Task_Principal
+                                        'Trigger'=$Scheduled_Task_Trigger
+                                        'Description'= 'This scheduled task is to kick off the PCCleanup script for conference room hosts every day at 7PM'
+                                        'Settings'=$Scheduled_Task_Settings
+                                        }
+
+                    $Scheduled_Task = New-ScheduledTask @ScheduledTaskParams
+                    
+                    Register-ScheduledTask PCCleanup -InputObject $Scheduled_Task
+
+            }#PSCmdlet IF
+        }#Process
+end{ Get-CimSession | Remove-CimSession }
+} #Function
