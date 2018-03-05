@@ -1,0 +1,87 @@
+#.ExternalHelp AuthenicatedUsersForAdminUser-help.xml
+
+Function Modify-ACL {
+    
+    [cmdletbinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$SuccessLog,
+
+        [Parameter(Mandatory=$true)]
+        [string]$ErrorLog
+
+)
+
+begin {Set-Location C:\}
+
+process {
+        TRY {
+
+                #Using the .NET class System.Security.Principal.SecurityIdentifier to pull NT Authority\Authenticated User's SID
+                $ObjectSID = New-Object System.Security.Principal.SecurityIdentifier ("S-1-5-11")
+                #Translating the SID into an account string.
+                $ObjectUSER = $ObjectSID.Translate( [System.Security.Principal.NTAccount])
+                #Creating final string from SID
+                $AUTHUSER = $ObjectUSER.Value.ToString()
+                
+                    #Getting Access Control List Permissions for NT Authority\Authenticated User
+                    $GetACL = Get-Acl -Filter $AUTHUSER
+                
+                    #Testing path to see what admin account exists
+                    # DISCLOSURE
+                    #*******If you have multiple local admin accounts, please put them in the test path. The script is ideally for if you have up to 3 local admin accounts*******
+                    $PathExists = Test-Path 'C:\Users\Administrator'
+                    $PathExists2 = Test-Path 'C:\Users\secondadministrator'
+                        #NEW : IF STATEMENT
+                        IF ($PathExists -like $true) {
+                            $ACLPath = 'C:\Users\Administrator'
+                            $ParamsForSetACL = @{
+                                                'Path'=$ACLPath
+                                                'AclObject'=$GetACL
+                                                'ErrorAction'='SilentlyContinue'
+                                                }
+
+                                $SetACL = Set-Acl @ParamsForSetACL
+
+                                    $env:COMPUTERNAME | Out-File $SuccessLog -NoClobber
+                                            } #IF
+    
+                        elseif ($PathExists2 -like $true) {
+                            $ACLPath2 = 'C:\Users\secondadministrator'
+                            $ParamsForSetACL = @{
+                                'Path'=$ACLPath2
+                                'AclObject'=$GetACL
+                                'ErrorAction'='SilentlyContinue'
+                                                }
+
+                                 $SetACL = Set-Acl @ParamsForSetACL
+
+                                    $env:COMPUTERNAME | Out-File $SuccessLog -NoClobber
+                            } #ELSEIF
+
+                        else {
+                            $ACLPath3 = 'C:\Users\thirdadministrator'
+                            $ParamsForSetACL = @{
+                                'Path'=$ACLPath3
+                                'AclObject'=$GetACL
+                                'ErrorAction'='SilentlyContinue'
+                                                }
+
+                                 $SetACL = Set-Acl @ParamsForSetACL
+
+                                    $env:COMPUTERNAME | Out-File $SuccessLog -NoClobber
+
+                        } #ELSE
+                 }# TRY
+
+        CATCH {
+
+                Write-Warning 'An error has occured. Please look at the logs under your specified location'
+                $_ | Out-File $ErrorLog
+                Throw
+
+              }# CATCH 
+        }#Process
+end{}
+
+} #Function
