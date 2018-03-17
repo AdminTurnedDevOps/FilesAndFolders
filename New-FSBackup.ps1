@@ -1,5 +1,7 @@
                 Function New-FSBackup {
-                    [cmdletbinding(DefaultParameterSetName='CopyParam',SupportsShouldProcess=$true,ConfirmImpact = 'low')]
+                    [cmdletbinding(DefaultParameterSetName='CopyParam',
+                                  SupportsShouldProcess=$true,
+                                  ConfirmImpact = 'low')]
 
                     param(
                         [Parameter(ParameterSetName='CopyParam',HelpMessage='Please enter your errorlog folder if the default does not exist')]
